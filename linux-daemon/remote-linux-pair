@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+import socket, sys, json, struct, subprocess
+
+from pprint import pprint
+
+def is_json(myjson):
+    try:
+        json_object = json.loads(myjson)
+    except ValueError, e:
+        return False
+    return True
+
+def get_default_gateway_linux():
+    """Read the default gateway directly from /proc."""
+    with open("/proc/net/route") as fh:
+        for line in fh:
+            fields = line.strip().split()
+            if fields[1] != '00000000' or not int(fields[3], 16) & 2:
+                continue
+
+            return socket.inet_ntoa(struct.pack("<L", int(fields[2], 16)))
+
+
+# Create a TCP/IP socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+# Bind the socket to the port
+server_address = ('', 61598)
+
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect((str(get_default_gateway_linux()), 0))
+IP = s.getsockname()[0]
+
+print >>sys.stderr, "You are about to pair a new device to this computer.\nIf you have not done so already, please open the Remote Linux Unlocker app. You can download it here: [link]\nWhen you are ready, please type the following IP address into the required field on your device.\n\nIP Address: " + IP
+sock.bind(server_address)
+
+# Listen for incoming connections
+sock.listen(1)
+
+while True:
+    # Wait for a connection
+    print >>sys.stderr, '\nAwaiting your response...'
+    connection, client_address = sock.accept()
+
+    try:
+        print >>sys.stderr, 'Connection received...'
+
+        # Receive the data in small chunks and retransmit it
+        while True:
+            data = connection.recv(256).strip()
+            print >>sys.stderr, 'Processing request...'
+            if is_json(data):
+                data = json.loads(data)
+                if data["command"] == "pair" and len(data["key"]) == 64:
+                    with open('keys.db', 'w+') as file:
+                        file.write(data["key"] + "\n")
+                    connection.sendall('{"status":"success"}')
+                    print >> sys.stderr, 'Pairing was successful!'
+                    sys.exit()
+
+            else:
+                print >>sys.stderr, 'Invalid request!'
+                sys.exit()
+                break
+
+    finally:
+        # Clean up the connection
+        connection.close()
