@@ -1,6 +1,31 @@
+# -*- coding: utf-8 -*-
 import socket
 import sys
-from subprocess import call
+import json
+
+from pprint import pprint
+import subprocess
+
+def is_json(myjson):
+    try:
+        json_object = json.loads(myjson)
+    except ValueError, e:
+        return False
+    return True
+
+
+def is_locked():
+    users = [i.split(':') for i in open('/etc/shadow').readlines()]
+    user = [i[0] for i in users if i[1] not in ('!', '*')][0]
+
+    commands = 'su ' + user + ' -c -- "gdbus call -e -d com.canonical.Unity -o /com/canonical/Unity/Session -m com.canonical.Unity.Session.IsLocked"'
+    p = subprocess.Popen(commands,stdout=subprocess.PIPE, shell=True)
+    if p.communicate().count("true"):
+        return True
+    else:
+        return False
+    return False
+
 
 
 # Create a TCP/IP socket
@@ -25,17 +50,21 @@ while True:
 
         # Receive the data in small chunks and retransmit it
         while True:
-            data = connection.recv(16).strip()
+            data = connection.recv(256).strip()
             print >>sys.stderr, 'received "%s"' % data
-            if data:
-                if data == "lock":
+            if is_json(data):
+                data = json.loads(data)
+                if data["command"] == "lock":
                     print >>sys.stderr, 'client requesting lock'
-                    call(["loginctl", "lock-sessions"])
-                    connection.sendall("locking\n")
-                elif data == "unlock":
+                    subprocess.call(["loginctl", "lock-sessions"])
+                    connection.sendall('{"status":"success"}')
+                elif data["command"] == "unlock":
                     print >>sys.stderr, 'client requesting unlock'
-                    call(["loginctl", "unlock-sessions"])
-                    connection.sendall("unlocking\n")
+                    subprocess.call(["loginctl", "unlock-sessions"])
+                    connection.sendall('{"status":"success"}')
+                elif data["command"] == "echo":
+                    print >>sys.stderr, 'client requesting unlock'
+                    connection.sendall('{"status":"success","hostname":"' + socket.gethostname() +  '","isLocked":"' + str(is_locked()) + '"}')
 
             else:
                 print >>sys.stderr, 'no more data from', client_address
