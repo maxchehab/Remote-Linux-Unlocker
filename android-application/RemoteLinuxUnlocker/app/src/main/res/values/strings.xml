@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Remote Linux Unlocker</string>
+    <string name="title_activity_computer_list">ComputerListActivity</string>
 </resources>
