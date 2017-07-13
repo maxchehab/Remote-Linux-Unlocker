@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-import socket
-import sys
-import json
-
+import socket, sys, json, subprocess
 from pprint import pprint
-import subprocess
 
 def is_json(myjson):
     try:
@@ -26,6 +22,14 @@ def is_locked():
         return False
     return False
 
+def authenticate_key(key):
+    with open(os.path.dirname(os.path.realpath(__file__)) + '/keys.db') as file:
+        for line in file:
+            if line.strip() == key:
+                return True
+                break
+
+    return False
 
 
 # Create a TCP/IP socket
@@ -54,15 +58,15 @@ while True:
             print >>sys.stderr, 'received "%s"' % data
             if is_json(data):
                 data = json.loads(data)
-                if data["command"] == "lock":
+                if data["command"] == "lock" and data["key"] and authenticate_key(data["key"]):
                     print >>sys.stderr, 'client requesting lock'
                     subprocess.call(["loginctl", "lock-sessions"])
                     connection.sendall('{"status":"success"}')
-                elif data["command"] == "unlock":
+                elif data["command"] == "unlock" and data["key"] and authenticate_key(data["key"]):
                     print >>sys.stderr, 'client requesting unlock'
                     subprocess.call(["loginctl", "unlock-sessions"])
                     connection.sendall('{"status":"success"}')
-                elif data["command"] == "echo":
+                elif data["command"] == "echo" and data["key"] and authenticate_key(data["key"]):
                     print >>sys.stderr, 'client requesting unlock'
                     connection.sendall('{"status":"success","hostname":"' + socket.gethostname() +  '","isLocked":"' + str(is_locked()) + '"}')
 

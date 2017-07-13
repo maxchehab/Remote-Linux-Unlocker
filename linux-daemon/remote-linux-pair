@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import socket, sys, json, struct, subprocess
+import socket, sys, json, struct, os
 
 from pprint import pprint
 
@@ -53,7 +53,11 @@ while True:
             if is_json(data):
                 data = json.loads(data)
                 if data["command"] == "pair" and len(data["key"]) == 64:
-                    with open('keys.db', 'w+') as file:
+                    if os.path.exists(os.path.dirname(os.path.realpath(__file__)) + '/keys.db'):
+                        append_write = 'a' # append if already exists
+                    else:
+                        append_write = 'w' # make a new file if not
+                    with open(os.path.dirname(os.path.realpath(__file__)) + '/keys.db', append_write) as file:
                         file.write(data["key"] + "\n")
                     connection.sendall('{"status":"success"}')
                     print >> sys.stderr, 'Pairing was successful!'
