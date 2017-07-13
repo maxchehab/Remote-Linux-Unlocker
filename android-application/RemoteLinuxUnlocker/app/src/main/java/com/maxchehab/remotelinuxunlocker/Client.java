@@ -3,16 +3,18 @@ package com.maxchehab.remotelinuxunlocker;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class Client extends AsyncTask<Void, Void, Void> {
+public class Client extends AsyncTask<Void, String, String> {
 
     String host;
     int port;
@@ -25,9 +27,8 @@ public class Client extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... arg0) {
+    protected String doInBackground(Void... arg0) {
         Socket socket = null;
-
         try {
             InetAddress address = InetAddress.getByName(host);
             socket = new Socket(address, port);
@@ -41,6 +42,10 @@ public class Client extends AsyncTask<Void, Void, Void> {
 
             Log.d("async-client","sent message: " + message);
 
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String response = in.readLine();
+            Log.d("async-clinet","recieved message: " + response);
+            return response;
         } catch (IOException exception) {
             Log.d("async-client", "the server is offline?");
         }finally {
@@ -57,7 +62,7 @@ public class Client extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected void onPostExecute(Void result) {
+    protected void onPostExecute(String result) {
         super.onPostExecute(result);
     }
 
