@@ -2,23 +2,32 @@ package com.maxchehab.remotelinuxunlocker;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class ComputerListActivity extends AppCompatActivity {
 
     private static Random rnd = new Random();
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
 
         SharedPreferences sharedPref = getSharedPreferences("data", MODE_PRIVATE);
         if(!sharedPref.contains("key")){
@@ -45,16 +54,54 @@ public class ComputerListActivity extends AppCompatActivity {
         });
 
 
-        /*
-            First time : Create random key
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.refresh);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshComputerList();
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(R.color.colorAccent);
 
-            Check for devices, if key is successful, display.
-            If not, display pairing
+        refreshComputerList();
+    }
+
+    @Override
+    protected void onResume() {
+        refreshComputerList();
+
+        super.onResume();
+    }
+
+    public void refreshComputerList(){
+        SharedPreferences sharedPref = getSharedPreferences("data", MODE_PRIVATE);
+        String key = sharedPref.getString("key",null);
+        Log.d("ips",sharedPref.getString("ips",null));
+        String ipString = sharedPref.getString("ips",null);
+        List<String> ips = new ArrayList<String>();
+        if(ipString.length() > 0){
+            ips = Arrays.asList(sharedPref.getString("ips",null).split(","));
+            ips = new ArrayList<String>(ips);
+        }
+        ArrayList<View> computerList = new ArrayList<View>();
+
+        for(int i = 0 ; i < ips.size(); i++){
+            if(ips.get(i).length() > 0){
+                Log.d("creating-ip",ips.get(i));
+                computerList.add(new ComputerLayout(this,ips.get(i),key));
+            }
+        }
+
+        LinearLayout feedLayout = (LinearLayout) findViewById(R.id.list);
+        feedLayout.removeAllViews();
 
 
-
-        */
-
+        for(int i = 0; i < computerList.size(); i++){
+            feedLayout.addView(computerList.get(i));
+        }
+        swipeContainer.setRefreshing(false);
     }
 
     public static String getRandomNumber(int digCount) {

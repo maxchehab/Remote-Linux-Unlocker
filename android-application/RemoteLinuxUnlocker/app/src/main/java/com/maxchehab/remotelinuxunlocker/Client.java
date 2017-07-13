@@ -44,7 +44,7 @@ public class Client extends AsyncTask<Void, String, String> {
 
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String response = in.readLine();
-            Log.d("async-clinet","recieved message: " + response);
+            Log.d("async-client","recieved message: " + response);
             return response;
         } catch (IOException exception) {
             Log.d("async-client", "the server is offline?");

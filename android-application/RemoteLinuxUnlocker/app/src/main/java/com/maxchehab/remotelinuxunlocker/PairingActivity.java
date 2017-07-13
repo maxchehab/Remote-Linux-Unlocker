@@ -69,6 +69,17 @@ public class PairingActivity extends AppCompatActivity {
     void pair(){
         SharedPreferences sharedPref = getSharedPreferences("data", MODE_PRIVATE);
         String key = sharedPref.getString("key",null);
+        String ipString = sharedPref.getString("ips",null);
+        List<String> ips = new ArrayList<String>();
+        if(ipString.length() > 0){
+            ips = Arrays.asList(sharedPref.getString("ips",null).split(","));
+            ips = new ArrayList<String>(ips);
+        }
+        if(ips.contains(ipInput.getText().toString())){
+            ipInput.setError("IP address is already paired.");
+            return;
+        }
+
         try {
             String response = new Client(ipInput.getText().toString(), 61598, "{\"command\":\"pair\",\"key\":\"" +  key + "\"}").execute().get(1, TimeUnit.SECONDS);
             Log.d("UI RESPONSE", "response: " + response);
