@@ -44,17 +44,19 @@
                 android:textAlignment="textEnd"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:textSize="30dp" />
+
             <Button
-                android:layout_gravity="end"
                 android:id="@+id/lockButton"
-                style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
+                android:theme="@style/AccentButton"
+                style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_height="fill_parent"
+                android:layout_gravity="end"
                 android:layout_marginLeft="10dp"
                 android:text="Unlock"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:textColor="@color/cardview_light_background"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
 
         </LinearLayout>
     </LinearLayout>
