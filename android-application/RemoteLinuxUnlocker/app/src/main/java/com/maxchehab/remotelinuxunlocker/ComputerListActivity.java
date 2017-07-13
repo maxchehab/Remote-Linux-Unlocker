@@ -24,9 +24,11 @@ public class ComputerListActivity extends AppCompatActivity {
 
     private static Random rnd = new Random();
     private SwipeRefreshLayout swipeContainer;
+    boolean commanded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
 
 
         SharedPreferences sharedPref = getSharedPreferences("data", MODE_PRIVATE);
@@ -70,6 +72,9 @@ public class ComputerListActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        if (getIntent().getAction() != null) {
+            Log.e("INTENT-ACTION:",getIntent().getAction().toString());
+        }
         refreshComputerList();
 
         super.onResume();
@@ -90,7 +95,15 @@ public class ComputerListActivity extends AppCompatActivity {
         for(int i = 0 ; i < ips.size(); i++){
             if(ips.get(i).length() > 0){
                 Log.d("creating-ip",ips.get(i));
-                computerList.add(new ComputerLayout(this,ips.get(i),key));
+
+                if(!commanded && getIntent().hasExtra("command")){
+
+                    computerList.add(new ComputerLayout(this,ips.get(i),key,getIntent().getStringExtra("command")));
+                    commanded = true;
+                }else{
+                    computerList.add(new ComputerLayout(this,ips.get(i),key));
+                }
+
             }
         }
 

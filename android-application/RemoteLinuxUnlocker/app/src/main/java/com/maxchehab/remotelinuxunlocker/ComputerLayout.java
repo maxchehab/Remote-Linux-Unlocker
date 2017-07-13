@@ -23,7 +23,12 @@ public class ComputerLayout extends CardView{
 
     public ComputerLayout(Context context, String ip, String key) {
         super(context);
-        init(ip,key);
+        init(ip,key,null);
+    }
+
+    public ComputerLayout(Context context, String ip, String key, String command) {
+        super(context);
+        init(ip,key, command);
     }
 
     private TextView hostname;
@@ -31,7 +36,7 @@ public class ComputerLayout extends CardView{
 
     private boolean locked = false;
 
-    private void init(final String ip, final String key) {
+    private void init(final String ip, final String key, String command) {
 
         inflate(getContext(), R.layout.computer_layout, this);
         hostname = (TextView) findViewById(R.id.hostname);
@@ -51,6 +56,10 @@ public class ComputerLayout extends CardView{
                 }
             }
         });
+
+        if(command != null){
+            lock(ip,key,command);
+        }
     }
 
     private void lock(String ip, String key, String action){

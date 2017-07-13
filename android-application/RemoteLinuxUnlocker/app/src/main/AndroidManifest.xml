@@ -21,7 +21,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PairingActivity"></activity>
+        <activity android:name=".PairingActivity" />
+        <activity
+            android:name=".LockComputer"
+            android:label="Locking My Computer">
+            <intent-filter>
+                <action android:name="unlock" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".UnlockComputer"
+            android:label="Unlocking My Computer">
+            <intent-filter>
+                <action android:name="unlock" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
