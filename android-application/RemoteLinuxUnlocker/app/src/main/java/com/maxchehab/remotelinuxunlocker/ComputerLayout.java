@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -28,23 +29,56 @@ public class ComputerLayout extends CardView{
     }
 
     private TextView hostname;
-    private TextView lockText;
-    private Switch lockSwitch;
+    private Button lockButton;
     private boolean locked = false;
 
     private void init(final String ip, final String key) {
 
         inflate(getContext(), R.layout.computer_layout, this);
         hostname = (TextView) findViewById(R.id.hostname);
-        lockText = (TextView) findViewById(R.id.lockText);
-        lockSwitch = (Switch) findViewById(R.id.lockSwitch);
-
-
+        lockButton = (Button) findViewById(R.id.lockButton);
 
         echo(ip, key);
 
+        lockButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(locked){
+                    lock(ip,key,"unlock");
+                }else{
+                    lock(ip, key,"lock");
+                }
+            }
+        });
 
     }
+
+    private void lock(String ip, String key, String action){
+        String response = null;
+        try {
+            response = new Client(ip,61599,"{\"command\":\"" + action + "\",\"key\":\"" +  key + "\"}").execute().get(2, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+        Log.d("unlock-response","Response: " + response);
+
+        if(response != null){
+            JsonParser jp = new JsonParser();
+            JsonElement root = jp.parse(response);
+            JsonObject rootobj = root.getAsJsonObject();
+            locked = rootobj.get("isLocked").getAsBoolean();
+            if(locked){
+                lockButton.setText("Unlock");
+            }else{
+                lockButton.setText("Lock");
+            }
+        }
+    }
+
 
     private void echo(String ip, String key){
         String echoResponse = null;
@@ -72,13 +106,11 @@ public class ComputerLayout extends CardView{
             locked = rootobj.get("isLocked").getAsBoolean();
 
             if(locked){
-                lockText.setText("Unlock");
+                lockButton.setText("Unlock");
             }else{
-                lockText.setText("Lock");
+                lockButton.setText("Lock");
             }
-            lockSwitch.setChecked(locked);
         }
-
     }
 
 }
