@@ -1,4 +1,4 @@
-# remote-linux-unlocker
+# Remote-Linux-Unlocker
 Remote Linux Unlocker is an android application paired with a linux daemon that allows users to unlock and lock the Ubuntu Unity lock screen.
 
 ### How to install the android application
