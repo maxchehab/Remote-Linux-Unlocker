@@ -32,7 +32,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect((str(get_default_gateway_linux()), 0))
 IP = s.getsockname()[0]
 
-print >>sys.stderr, "You are about to pair a new device to this computer.\nIf you have not done so already, please open the Remote Linux Unlocker app. You can download it here: [link]\nWhen you are ready, please type the following IP address into the required field on your device.\n\nIP Address: " + IP
+print >>sys.stderr, "You are about to pair a new device to this computer.\nIf you have not done so already, please open the Remote Linux Unlocker app. You can download it here: https://play.google.com/store/apps/details?id=com.maxchehab.remotelinuxunlocker\nWhen you are ready, please type the following IP address into the required field on your device.\n\nIP Address: " + IP
 sock.bind(server_address)
 
 # Listen for incoming connections
