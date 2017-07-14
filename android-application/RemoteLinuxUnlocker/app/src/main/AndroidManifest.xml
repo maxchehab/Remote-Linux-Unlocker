@@ -22,24 +22,22 @@
             </intent-filter>
         </activity>
         <activity android:name=".PairingActivity" />
-        <activity
-            android:name=".LockComputer"
-            android:label="Locking My Computer">
-            <intent-filter>
-                <action android:name="unlock" />
 
-                <category android:name="android.intent.category.DEFAULT" />
+        <activity android:name=".LockComputer" android:label="Lock My Computer">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".UnlockComputer"
-            android:label="Unlocking My Computer">
-            <intent-filter>
-                <action android:name="unlock" />
 
-                <category android:name="android.intent.category.DEFAULT" />
+
+        <activity android:name=".UnlockComputer" android:label="Unlock My Computer">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

@@ -10,9 +10,6 @@ public class UnlockComputer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_unlock_computer);
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lock_computer);
         Intent intent = new Intent(getBaseContext(), ComputerListActivity.class);
         intent.putExtra("command", "unlock");
         startActivity(intent);
