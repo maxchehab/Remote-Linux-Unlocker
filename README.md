@@ -2,7 +2,7 @@
 Remote Linux Unlocker is an android application paired with a linux daemon that allows users to unlock and lock the Ubuntu Unity lock screen.
 
 ### How to install android application
-Install the android application from the [Google Play Store](https://play.google.com/store/apps/details?id=com.maxchehab.remotelinuxunlocker) or download it source from this repository.
+Install the android application from the [Google Play Store](https://play.google.com/store/apps/details?id=com.maxchehab.remotelinuxunlocker) or download the source from this repository.
 
 ### How to install linux daemon
 
