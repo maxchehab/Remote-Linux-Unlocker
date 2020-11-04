@@ -6,7 +6,7 @@
 Description=unlocker-daemon
 
 [Service]
-ExecStart=/usr/bin/python /home/maxchehab/Projects/remote-linux-unlocker/linux-daemon/unlocker-daemon.py
+ExecStart=/usr/bin/python --edit--/unlocker-daemon.py
 
 [Install]
 WantedBy=multi-user.target
